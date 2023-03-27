@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoalTrackerAPI", "GoalTrackerAPI\GoalTrackerAPI.csproj", "{D0F33CB2-2C0D-4617-9D7D-64F3E1210A69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoalTrackerAPI", "GoalTrackerAPI\GoalTrackerAPI.csproj", "{D0F33CB2-2C0D-4617-9D7D-64F3E1210A69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{77983E5D-422A-4F61-A7BD-4BB2DB06AEC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{3B17069A-6C4C-474A-96F0-3E156E0356B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{D0F33CB2-2C0D-4617-9D7D-64F3E1210A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0F33CB2-2C0D-4617-9D7D-64F3E1210A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0F33CB2-2C0D-4617-9D7D-64F3E1210A69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77983E5D-422A-4F61-A7BD-4BB2DB06AEC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77983E5D-422A-4F61-A7BD-4BB2DB06AEC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77983E5D-422A-4F61-A7BD-4BB2DB06AEC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77983E5D-422A-4F61-A7BD-4BB2DB06AEC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B17069A-6C4C-474A-96F0-3E156E0356B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B17069A-6C4C-474A-96F0-3E156E0356B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B17069A-6C4C-474A-96F0-3E156E0356B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B17069A-6C4C-474A-96F0-3E156E0356B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
