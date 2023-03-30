@@ -24,6 +24,8 @@ namespace BusinessLayer.Services
 
         public async Task<GoalCreationDTO> CreateGoal(GoalCreationDTO goal)
         {
+            var mappedGoal = _mapper.Map<Goal>(goal);
+            int i = 0;
             _context.GoalList.Add(_mapper.Map<Goal>(goal));
             await _context.SaveChangesAsync();
             return goal;

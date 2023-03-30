@@ -16,6 +16,6 @@ namespace DataAccessLayer.Models
         public int Duration { get; set; }
         public string Theme { get; set; } = string.Empty;
         public string CreatorId { get; set; } = string.Empty;
-        public string[] MembersIds { get; set; } = new string[4];
+        public IList<MembersIds> MembersIds { get; set; } = new List<MembersIds>();
     }
 }

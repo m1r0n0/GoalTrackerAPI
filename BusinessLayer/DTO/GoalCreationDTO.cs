@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using DataAccessLayer.Models;
 
 namespace BusinessLayer.DTO
 {
@@ -14,7 +14,6 @@ namespace BusinessLayer.DTO
         public int Duration { get; set; }
         public string Theme { get; set; } = string.Empty;
         public string CreatorId { get; set; } = string.Empty;
-        [NotMapped]
-        public List<string>? MembersIds { get; set; } = new List<string>();
+        public IList<MembersIds>? MembersIds { get; set; } = new List<MembersIds>();
     }
 }

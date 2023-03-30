@@ -8,9 +8,10 @@ namespace DataAccessLayer.Data
         public GoalContext(DbContextOptions<GoalContext> options)
                     : base(options)
         {
-            //Database.EnsureCreated();
+            Database.EnsureCreated();
         }
         public DbSet<DataAccessLayer.Models.Goal> GoalList { get; set; } = default!;
+        public DbSet<DataAccessLayer.Models.MembersIds> MembersIds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
