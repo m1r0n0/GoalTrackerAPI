@@ -1,6 +1,6 @@
-﻿using BusinessLayer.Interfaces;
+﻿using BusinessLayer.DTO;
+using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
-using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using ShortenUrlWebApi.Controllers;
 
@@ -26,17 +26,16 @@ namespace GoalTrackerAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult CreateGoal(Goal goal)
+        public IActionResult CreateGoal(GoalCreationDTO goal)
         {
             _goalService.CreateGoal(goal);
-
-
-
-            //Catch exceptions!!!
-
-
-
             return Ok(goal);
+        }
+
+        [HttpGet]
+        public IActionResult GetAllGoals()
+        {
+
         }
     }
 }

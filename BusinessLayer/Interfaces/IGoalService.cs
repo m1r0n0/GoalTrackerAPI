@@ -1,9 +1,9 @@
-﻿using DataAccessLayer.Models;
+﻿using BusinessLayer.DTO;
 
 namespace BusinessLayer.Interfaces
 {
     public interface IGoalService
     {
-        Task<Goal> CreateGoal(Goal goal);
+        Task<GoalCreationDTO> CreateGoal(GoalCreationDTO goal);
     }
 }
