@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(GoalContext))]
-    [Migration("20230330073825_initialMigration")]
-    partial class initialMigration
+    [Migration("20230402201624_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,11 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Date")
+                    b.Property<string>("DateOfBeginning")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateOfEnding")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -48,13 +52,7 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
                     b.Property<int>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Progress")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -69,6 +67,10 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Id");
@@ -76,12 +78,41 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("GoalList");
                 });
 
+            modelBuilder.Entity("DataAccessLayer.Models.GoalTask", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("GoalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GoalId");
+
+                    b.ToTable("GoalTasks");
+                });
+
             modelBuilder.Entity("DataAccessLayer.Models.MembersIds", b =>
                 {
                     b.Property<string>("MemberId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("GoalId")
+                    b.Property<int>("GoalId")
                         .HasColumnType("int");
 
                     b.HasKey("MemberId");
@@ -91,16 +122,27 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("MembersIds");
                 });
 
+            modelBuilder.Entity("DataAccessLayer.Models.GoalTask", b =>
+                {
+                    b.HasOne("DataAccessLayer.Models.Goal", null)
+                        .WithMany("Tasks")
+                        .HasForeignKey("GoalId");
+                });
+
             modelBuilder.Entity("DataAccessLayer.Models.MembersIds", b =>
                 {
                     b.HasOne("DataAccessLayer.Models.Goal", null)
                         .WithMany("MembersIds")
-                        .HasForeignKey("GoalId");
+                        .HasForeignKey("GoalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Goal", b =>
                 {
                     b.Navigation("MembersIds");
+
+                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,6 +12,7 @@ namespace DataAccessLayer.Data
         }
         public DbSet<DataAccessLayer.Models.Goal> GoalList { get; set; } = default!;
         public DbSet<DataAccessLayer.Models.MembersIds> MembersIds { get; set; }
+        public DbSet<DataAccessLayer.Models.GoalTask> GoalTasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
