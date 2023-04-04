@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMvc();
 builder.Services.AddDbContext<GoalContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(MappingProfileGoalToGoalCreationDTO));
+builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();

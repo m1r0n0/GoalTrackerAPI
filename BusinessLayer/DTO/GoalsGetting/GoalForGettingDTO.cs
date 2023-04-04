@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace DataAccessLayer.Models
+﻿namespace BusinessLayer.DTO.GoalsGetting
 {
-    [Index("Id")]
-    public class Goal
+    public class GoalForGettingDTO
     {
-        public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
@@ -17,7 +13,13 @@ namespace DataAccessLayer.Models
         public string DateOfEnding { get; set; } = string.Empty;
         public string Theme { get; set; } = string.Empty;
         public string CreatorId { get; set; } = string.Empty;
-        public IList<Member> MembersIds { get; set; } = new List<Member>();
-        public IList<GoalTask> Tasks { get; set; } = new List<GoalTask>();
+        public IList<UserForGettingDTO> Members { get; set; } = new List<UserForGettingDTO>();
+        public IList<GoalTaskForGetting> Tasks { get; set; } = new List<GoalTaskForGetting>();
+
+        public GoalForGettingDTO(IList<UserForGettingDTO> members, IList<GoalTaskForGetting> tasks)
+        {
+            Members = members;
+            Tasks = tasks;
+        }
     }
 }
