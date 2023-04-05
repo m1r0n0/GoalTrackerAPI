@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using BusinessLayer.DTO;
+using BusinessLayer.DTO.GoalCreationDTO;
 using BusinessLayer.DTO.GoalsGetting;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace BusinessLayer.Services
@@ -23,25 +24,37 @@ namespace BusinessLayer.Services
             _mapper = mapper;
         }
 
-        public async Task<GoalCreationDTO> CreateGoal(GoalCreationDTO goal)
+        public async Task<GoalForCreationDTO> CreateGoal(GoalForCreationDTO goal)
         {
-            _context.GoalList.Add(_mapper.Map<Goal>(goal));
+            var mainGoal = _mapper.Map<Goal>(goal);
+            _context.GoalList.Add(mainGoal);
+            await _context.SaveChangesAsync();
+            if (!goal.IsComplex) return goal;
+
+            if (goal.SubGoals != null)
+                foreach (var subGoal in goal.SubGoals)
+                {
+                    var mappedSubGoal = _mapper.Map<Goal>(subGoal);
+                    mappedSubGoal.MainGoalId = mainGoal.Id;
+                    _context.GoalList.Add(mappedSubGoal);
+                }
             await _context.SaveChangesAsync();
             return goal;
         }
 
-        public GoalsListDTO GetGoals()
+        public async Task<GoalsListDTO> GetGoals()
         {
             GoalsListDTO goalsList = new();
-            foreach (Goal goal in _context.GoalList)
+            foreach (var goal in _context.GoalList)
             {
-                GoalForGettingDTO goalToAdd = _mapper.Map<GoalForGettingDTO>(goal);
-                var tasksForCurrentGoal = _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToList();
-                List<UserForGettingDTO> membersOfCurrentGoal = new()
-                {
-                    new UserForGettingDTO("ABBA"),
-                    new UserForGettingDTO("OIIO")
-                };
+                var goalToAdd = _mapper.Map<GoalForGettingDTO>(goal);
+                var tasksForCurrentGoal = await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
+
+                goalToAdd.Creator = new UserForGettingDTO(goal.CreatorId);
+
+                var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
+                var membersOfCurrentGoal = members.Select(member => new UserForGettingDTO(member.MemberId)).ToList();
+
 
                 goalToAdd.Members = membersOfCurrentGoal;
                 foreach (var task in tasksForCurrentGoal)

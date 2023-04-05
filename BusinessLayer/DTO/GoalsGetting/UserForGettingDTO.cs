@@ -2,11 +2,13 @@
 {
     public class UserForGettingDTO
     {
-        public string Name { get; set; } = "John";
+        public string UserId { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         public UserForGettingDTO(string name)
         {
             Name = name;
+            UserId = name + "Id";
         }
     }
 }

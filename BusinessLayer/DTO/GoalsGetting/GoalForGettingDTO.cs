@@ -12,7 +12,7 @@
         public string DateOfBeginning { get; set; } = string.Empty;
         public string DateOfEnding { get; set; } = string.Empty;
         public string Theme { get; set; } = string.Empty;
-        public string CreatorId { get; set; } = string.Empty;
+        public UserForGettingDTO? Creator { get; set; }
         public IList<UserForGettingDTO> Members { get; set; } = new List<UserForGettingDTO>();
         public IList<GoalTaskForGetting> Tasks { get; set; } = new List<GoalTaskForGetting>();
 
