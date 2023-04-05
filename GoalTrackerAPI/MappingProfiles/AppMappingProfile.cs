@@ -11,7 +11,7 @@ namespace ShortenUrlWebApi.MappingProfiles
         {
             CreateMap<Goal, GoalCreationDTO>().ReverseMap();
             CreateMap<Goal, GoalForGettingDTO>().ReverseMap();
-            CreateMap<GoalTask, GoalForGettingDTO>().ReverseMap();
+            CreateMap<GoalTask, GoalTaskForGetting>().ReverseMap();
 
         }
     }

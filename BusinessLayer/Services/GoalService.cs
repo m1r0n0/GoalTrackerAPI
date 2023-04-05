@@ -40,7 +40,7 @@ namespace BusinessLayer.Services
                 List<UserForGettingDTO> membersOfCurrentGoal = new()
                 {
                     new UserForGettingDTO("ABBA"),
-                    new UserForGettingDTO("Kate Bush")
+                    new UserForGettingDTO("OIIO")
                 };
 
                 goalToAdd.Members = membersOfCurrentGoal;

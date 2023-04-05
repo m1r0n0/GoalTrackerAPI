@@ -2,6 +2,6 @@
 {
     public class GoalsListDTO
     {
-        public IList<GoalForGettingDTO> Goals { get; set; }
+        public IList<GoalForGettingDTO> Goals { get; set; } = new List<GoalForGettingDTO>();
     }
 }

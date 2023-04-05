@@ -21,5 +21,7 @@
             Members = members;
             Tasks = tasks;
         }
+
+        public GoalForGettingDTO() { }
     }
 }
