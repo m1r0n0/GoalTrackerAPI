@@ -1,6 +1,6 @@
-﻿namespace BusinessLayer.DTO.GoalsGetting
+﻿namespace BusinessLayer.DTOs.GoalsGetting
 {
-    public class GoalsListDTO
+    public class GoalsListForGettingDTO
     {
         public IList<GoalForGettingDTO> Goals { get; set; } = new List<GoalForGettingDTO>();
     }

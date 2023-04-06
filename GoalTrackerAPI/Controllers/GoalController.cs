@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BusinessLayer.DTO.GoalCreationDTO;
-using BusinessLayer.DTO.GoalsGetting;
+using BusinessLayer.DTOs.GoalCreationDTO;
+using BusinessLayer.DTOs.GoalsGetting;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +34,7 @@ namespace GoalTrackerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<GoalsListDTO> GetAllGoals()
+        public async Task<GoalsListForGettingDTO> GetAllGoals()
         {
             return await _goalService.GetGoals();
         }

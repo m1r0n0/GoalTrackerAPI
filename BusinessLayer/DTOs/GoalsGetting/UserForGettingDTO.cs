@@ -1,4 +1,4 @@
-﻿namespace BusinessLayer.DTO.GoalsGetting
+﻿namespace BusinessLayer.DTOs.GoalsGetting
 {
     public class UserForGettingDTO
     {

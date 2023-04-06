@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using BusinessLayer.DTO.GoalCreationDTO;
-using BusinessLayer.DTO.GoalsGetting;
+using BusinessLayer.DTOs;
+using BusinessLayer.DTOs.GoalCreationDTO;
+using BusinessLayer.DTOs.GoalsGetting;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -42,27 +43,46 @@ namespace BusinessLayer.Services
             return goal;
         }
 
-        public async Task<GoalsListDTO> GetGoals()
+        public async Task<GoalsListForGettingDTO> GetGoals()
         {
-            GoalsListDTO goalsList = new();
+            GoalsListForGettingDTO goalsList = new();
             foreach (var goal in _context.GoalList)
             {
-                var goalToAdd = _mapper.Map<GoalForGettingDTO>(goal);
-                var tasksForCurrentGoal = await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
-
-                goalToAdd.Creator = new UserForGettingDTO(goal.CreatorId);
-
-                var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
-                var membersOfCurrentGoal = members.Select(member => new UserForGettingDTO(member.MemberId)).ToList();
-
-
-                goalToAdd.Members = membersOfCurrentGoal;
-                foreach (var task in tasksForCurrentGoal)
+                bool isSubgoal = goal.MainGoalId != null;
+                var subgoalsOfCurrentGoal = await _context.GoalList.Where(item => item.MainGoalId == goal.Id)?.ToListAsync();
+                bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
+                if (!isSubgoal)
                 {
-                    goalToAdd.Tasks.Add(_mapper.Map<GoalTaskForGetting>(task));
-                }
+                    var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
 
-                goalsList.Goals.Add(goalToAdd);
+                    goalToGet.Creator = new UserForGettingDTO(goal.CreatorId!);
+                    var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
+                    goalToGet.Members =
+                        members.Select(member => new UserForGettingDTO(member.MemberId)).ToList();
+
+                    if (!isComplexGoal)
+                    {
+                        var tasksForCurrentGoal =
+                            await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
+                        foreach (var task in tasksForCurrentGoal)
+                        {
+                            goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
+                        }
+
+                    }
+                    else
+                    {
+                        foreach (Goal subgoal in subgoalsOfCurrentGoal)
+                        {
+                            var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
+                            subgoalToGet.Tasks = _mapper.Map<List<GoalTaskDTO>>(await _context.GoalTasks.Where(task => task.GoalId == subgoal.Id)
+                                .ToListAsync());
+
+                            goalToGet.Subgoals.Add(subgoalToGet);
+                        }
+                    }
+                    goalsList.Goals.Add(goalToGet);
+                }
             }
             return goalsList;
         }

@@ -1,6 +1,6 @@
-﻿namespace BusinessLayer.DTO.GoalCreationDTO
+﻿namespace BusinessLayer.DTOs
 {
-    public class GoalTaskForCreationDTO
+    public class GoalTaskDTO
     {
         public string Title { get; set; } = string.Empty;
         public string Time { get; set; } = string.Empty;

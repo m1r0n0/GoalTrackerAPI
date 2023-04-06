@@ -1,4 +1,4 @@
-﻿namespace BusinessLayer.DTO.GoalCreationDTO
+﻿namespace BusinessLayer.DTOs.GoalCreationDTO
 {
     public class GoalForCreationDTO
     {
@@ -13,7 +13,7 @@
         public string Theme { get; set; } = string.Empty;
         public string CreatorId { get; set; } = string.Empty;
         public IList<MemberForCreationDTO>? MembersIds { get; set; } = new List<MemberForCreationDTO>();
-        public IList<SubGoalForCreationDTO>? SubGoals { get; set; } = new List<SubGoalForCreationDTO>();
-        public IList<GoalTaskForCreationDTO>? Tasks { get; set; } = new List<GoalTaskForCreationDTO>();
+        public IList<SubgoalDTO>? SubGoals { get; set; } = new List<SubgoalDTO>();
+        public IList<GoalTaskDTO>? Tasks { get; set; } = new List<GoalTaskDTO>();
     }
 }

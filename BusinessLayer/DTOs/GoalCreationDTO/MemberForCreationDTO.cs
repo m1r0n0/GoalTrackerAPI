@@ -1,4 +1,4 @@
-﻿namespace BusinessLayer.DTO.GoalCreationDTO
+﻿namespace BusinessLayer.DTOs.GoalCreationDTO
 {
     public class MemberForCreationDTO
     {

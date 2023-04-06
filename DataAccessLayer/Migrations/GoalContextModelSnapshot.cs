@@ -68,7 +68,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Id");
 
-                    b.ToTable("GoalList");
+                    b.ToTable("GoalList", (string)null);
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.GoalTask", b =>
@@ -97,7 +97,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("GoalId");
 
-                    b.ToTable("GoalTasks");
+                    b.ToTable("GoalTasks", (string)null);
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Member", b =>
@@ -119,7 +119,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("GoalId");
 
-                    b.ToTable("MembersIds");
+                    b.ToTable("MembersIds", (string)null);
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.GoalTask", b =>
