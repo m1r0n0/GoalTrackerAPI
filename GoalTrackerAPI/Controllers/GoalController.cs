@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using BusinessLayer.DTO;
+using BusinessLayer.DTOs.GoalCreationDTO;
+using BusinessLayer.DTOs.GoalsGetting;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
-using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
-using ShortenUrlWebApi.Controllers;
 
 namespace GoalTrackerAPI.Controllers
 {
@@ -13,7 +12,7 @@ namespace GoalTrackerAPI.Controllers
     public class GoalController : AppController
     {
         private readonly GoalContext _context;
-         private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly IGoalService _goalService;
 
         public GoalController(
@@ -23,22 +22,21 @@ namespace GoalTrackerAPI.Controllers
             IGoalService goalService) : base(httpContextAccessor)
         {
             _context = context;
-             _mapper = mapper;
+            _mapper = mapper;
             _goalService = goalService;
         }
 
         [HttpPut]
-        public IActionResult CreateGoal(GoalCreationDTO goal)
+        public async Task<IActionResult> CreateGoal(GoalForCreationDTO goal)
         {
-            var mappedGoal = _mapper.Map<Goal>(goal);
-            _goalService.CreateGoal(goal);
+            await _goalService.CreateGoal(goal);
             return Ok(goal);
         }
 
-        /*        [HttpGet]
-                public IActionResult GetAllGoals()
-                {
-
-                }*/
+        [HttpGet]
+        public async Task<GoalsListForGettingDTO> GetAllGoals()
+        {
+            return await _goalService.GetGoals();
+        }
     }
 }

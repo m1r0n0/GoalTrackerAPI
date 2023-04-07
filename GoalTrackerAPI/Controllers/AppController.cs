@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ShortenUrlWebApi.Controllers
+namespace GoalTrackerAPI.Controllers
 {
     [ApiController]
     public abstract class AppController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AppController(IHttpContextAccessor httpContextAccessor)
+
+        protected AppController(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }

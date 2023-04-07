@@ -1,9 +1,11 @@
-﻿using BusinessLayer.DTO;
+﻿using BusinessLayer.DTOs.GoalCreationDTO;
+using BusinessLayer.DTOs.GoalsGetting;
 
 namespace BusinessLayer.Interfaces
 {
     public interface IGoalService
     {
-        Task<GoalCreationDTO> CreateGoal(GoalCreationDTO goal);
+        Task<GoalForCreationDTO> CreateGoal(GoalForCreationDTO goal);
+        Task<GoalsListForGettingDTO> GetGoals();
     }
 }

@@ -19,6 +19,7 @@ namespace DataAccessLayer.Migrations
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Progress = table.Column<int>(type: "int", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBeginning = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfEnding = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -39,7 +40,7 @@ namespace DataAccessLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Time = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    GoalId = table.Column<int>(type: "int", nullable: true)
+                    GoalId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,19 +49,22 @@ namespace DataAccessLayer.Migrations
                         name: "FK_GoalTasks_GoalList_GoalId",
                         column: x => x.GoalId,
                         principalTable: "GoalList",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "MembersIds",
                 columns: table => new
                 {
-                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MemberId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GoalId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MembersIds", x => x.MemberId);
+                    table.PrimaryKey("PK_MembersIds", x => x.Id);
                     table.ForeignKey(
                         name: "FK_MembersIds_GoalList_GoalId",
                         column: x => x.GoalId,
