@@ -11,10 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMvc();
-builder.Services.AddDbContext<GoalContext>(options =>
+builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(AppGoalMappingProfile));
+builder.Services.AddAutoMapper(typeof(AppGoalMappingProfile), typeof(AppUserMappingProfile));
 builder.Services.AddScoped<IGoalService, GoalService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();
 

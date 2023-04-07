@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLayer.DTOs;
 using BusinessLayer.DTOs.GoalCreationDTO;
-using BusinessLayer.DTOs.GoalsGetting;
+using BusinessLayer.DTOs.GoalsGettingDTO;
 using DataAccessLayer.Models;
 
 namespace GoalTrackerAPI.MappingProfiles

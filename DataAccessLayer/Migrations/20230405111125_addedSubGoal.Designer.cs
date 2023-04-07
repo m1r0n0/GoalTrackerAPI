@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
-    [DbContext(typeof(GoalContext))]
+    [DbContext(typeof(ApplicationContext))]
     [Migration("20230405111125_addedSubGoal")]
     partial class addedSubGoal
     {

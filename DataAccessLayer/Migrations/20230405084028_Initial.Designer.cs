@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
-    [DbContext(typeof(GoalContext))]
+    [DbContext(typeof(ApplicationContext))]
     [Migration("20230405084028_Initial")]
     partial class Initial
     {

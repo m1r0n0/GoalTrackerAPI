@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.DTOs.GoalCreationDTO;
-using BusinessLayer.DTOs.GoalsGetting;
+using BusinessLayer.DTOs.GoalsGettingDTO;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +11,14 @@ namespace GoalTrackerAPI.Controllers
     [Route("api/[controller]/[action]")]
     public class GoalController : AppController
     {
-        private readonly GoalContext _context;
+        private readonly ApplicationContext _context;
         private readonly IMapper _mapper;
         private readonly IGoalService _goalService;
 
         public GoalController(
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
-            GoalContext context,
+            ApplicationContext context,
             IGoalService goalService) : base(httpContextAccessor)
         {
             _context = context;
