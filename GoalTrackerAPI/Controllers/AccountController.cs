@@ -39,17 +39,9 @@ namespace GoalTrackerAPI.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    UserEmailIdDTO emailIdDTO = _accountService.GetUserIDFromUserEmail(model.Email);
-                    model.Id = emailIdDTO.UserId;
+                    model.Id = _accountService.GetUserEmailFromUserID(model.Email).UserId;
                     await _signInManager.SignInAsync(user, false);
                     return Ok(model);
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
                 }
             }
             return BadRequest(model);

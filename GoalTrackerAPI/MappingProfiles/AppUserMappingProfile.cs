@@ -9,7 +9,7 @@ namespace GoalTrackerAPI.MappingProfiles
         public AppUserMappingProfile()
         {
             CreateMap<UserDTO, User>()
-                .ForMember(user);
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom((src => src.Email)));
         }
     }
 }
