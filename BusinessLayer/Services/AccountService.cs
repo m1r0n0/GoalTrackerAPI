@@ -59,11 +59,11 @@ namespace BusinessLayer.Services
         public UserEmailIdDTO setNewUserEmail(string newUserEmail, string userID)
         {
             UserEmailIdDTO userEmailIdDTO = new(userID);
-            var userToPatch = _context.UserList?.Where(user => user.Id == userID).FirstOrDefault();
-            var probablyExistingUser = _context.UserList?.Where(user => user.Email == newUserEmail).FirstOrDefault();
+            User? userToPatch = _context.UserList?.Where(user => user.Id == userID).FirstOrDefault();
+            User? probablyExistingUser = _context.UserList?.Where(user => user.Email == newUserEmail).FirstOrDefault();
             if (probablyExistingUser == null)
             {
-                updateUserInDB();
+                UpdateUserInDB();
                 userEmailIdDTO.NewEmail = newUserEmail;
             }
             else
@@ -72,9 +72,9 @@ namespace BusinessLayer.Services
             }
             return userEmailIdDTO;
 
-            void updateUserInDB()
+            void UpdateUserInDB()
             {
-                userToPatch.Email = newUserEmail;
+                userToPatch!.Email = newUserEmail;
                 userToPatch.NormalizedEmail = newUserEmail.ToUpper();
                 userToPatch.UserName = newUserEmail;
                 userToPatch.NormalizedUserName = newUserEmail.ToUpper();
