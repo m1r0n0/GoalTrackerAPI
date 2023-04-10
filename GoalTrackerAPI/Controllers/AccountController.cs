@@ -36,7 +36,8 @@ namespace GoalTrackerAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(model);
             if (_accountService.CheckGivenEmailForExistingInDB(model.Email))
                 return Conflict(model);
-            User user = _mapper.Map<User>(model);
+            //User user = new User();
+            var user = _mapper.Map<User>(model);
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded) return BadRequest(model);
             model.Id = _accountService.GetUserEmailFromUserID(model.Email).UserId;
