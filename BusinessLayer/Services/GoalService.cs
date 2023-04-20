@@ -53,25 +53,13 @@ namespace BusinessLayer.Services
                 bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
                 if (!isSubgoal)
                 {
-                    var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
-
-                    goalToGet.Creator = new UserForGettingDTO(goal.CreatorId!);
+                   var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
+                    goalToGet.Creator = _mapper.Map<UserForGettingDTO?>(await _context.UserList
+                        .Where(user => user.Id == goal.CreatorId).FirstOrDefaultAsync());
                     var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
-                    goalToGet.Members =
-                        members.Select(member => new UserForGettingDTO(member.MemberId)).ToList();
-
-                    if (!isComplexGoal)
-                    {
-                        var tasksForCurrentGoal =
-                            await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
-                        foreach (var task in tasksForCurrentGoal)
-                        {
-                            goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
-                        }
-
-                    }
-                    else
-                    {
+                    goalToGet.Members = members.Select(member => _mapper.Map<UserForGettingDTO>(_context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
+                    if (isComplexGoal)
+                    { 
                         foreach (Goal subgoal in subgoalsOfCurrentGoal)
                         {
                             var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
@@ -79,6 +67,15 @@ namespace BusinessLayer.Services
                                 .ToListAsync());
 
                             goalToGet.Subgoals.Add(subgoalToGet);
+                        }
+                    }
+                    else
+                    {
+                        var tasksForCurrentGoal =
+                            await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
+                        foreach (var task in tasksForCurrentGoal)
+                        {
+                            goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
                         }
                     }
                     goalsList.Goals.Add(goalToGet);
