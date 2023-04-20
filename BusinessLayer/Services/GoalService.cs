@@ -45,6 +45,16 @@ namespace BusinessLayer.Services
 
         public async Task<GoalsListForGettingDTO> GetGoals()
         {
+            int CalculateGoalProgress(Goal goal)
+            {
+                int amountOfCompleted = 0;
+                foreach (GoalTask task in goal.Tasks)
+                {
+                    if (task.IsCompleted) amountOfCompleted++;
+                }
+                return (amountOfCompleted / goal.Tasks.Count) * 100;
+            }
+
             GoalsListForGettingDTO goalsList = new();
             foreach (var goal in _context.GoalList)
             {
@@ -53,21 +63,22 @@ namespace BusinessLayer.Services
                 bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
                 if (!isSubgoal)
                 {
-                   var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
+                    var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
                     goalToGet.Creator = _mapper.Map<UserForGettingDTO?>(await _context.UserList
                         .Where(user => user.Id == goal.CreatorId).FirstOrDefaultAsync());
                     var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
                     goalToGet.Members = members.Select(member => _mapper.Map<UserForGettingDTO>(_context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
                     if (isComplexGoal)
-                    { 
+                    {
                         foreach (Goal subgoal in subgoalsOfCurrentGoal)
                         {
                             var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
                             subgoalToGet.Tasks = _mapper.Map<List<GoalTaskDTO>>(await _context.GoalTasks.Where(task => task.GoalId == subgoal.Id)
                                 .ToListAsync());
-
+                            subgoalToGet.Progress = CalculateGoalProgress(subgoal);
                             goalToGet.Subgoals.Add(subgoalToGet);
                         }
+                        goalToGet.Progress = goalToGet.Subgoals.Sum(subgoal => subgoal.Progress) / goalToGet.Subgoals.Count;
                     }
                     else
                     {
@@ -77,6 +88,8 @@ namespace BusinessLayer.Services
                         {
                             goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
                         }
+
+                        goalToGet.Progress = CalculateGoalProgress(goal);
                     }
                     goalsList.Goals.Add(goalToGet);
                 }
