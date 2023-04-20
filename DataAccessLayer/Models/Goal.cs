@@ -2,7 +2,7 @@
 
 namespace DataAccessLayer.Models
 {
-    [Index("Id")]
+    [Index("MainGoalId")]
     public class Goal
     {
         public int Id { get; set; }

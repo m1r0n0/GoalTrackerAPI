@@ -1,5 +1,5 @@
 ﻿using BusinessLayer.DTOs.GoalCreationDTO;
-using BusinessLayer.DTOs.GoalsGetting;
+using BusinessLayer.DTOs.GoalsGettingDTO;
 
 namespace BusinessLayer.Interfaces
 {
