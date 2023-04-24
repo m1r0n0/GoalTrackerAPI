@@ -11,7 +11,6 @@ namespace DataAccessLayer.Models
         public string? Description { get; set; } = null;
         public int? Priority { get; set; } = null;
         public string? Status { get; set; } = null;
-        public int Progress { get; set; } = 0;
         public string? Category { get; set; } = null;
         public string? DateOfBeginning { get; set; } = null;
         public string? DateOfEnding { get; set; } = null;

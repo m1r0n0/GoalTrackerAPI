@@ -38,5 +38,11 @@ namespace GoalTrackerAPI.Controllers
         {
             return await _goalService.GetGoals();
         }
+
+        [HttpGet]
+        public async Task<GoalsListForGettingDTO> GetGoalsOfParticularUser(string userId)
+        {
+            return await _goalService.GetGoalsForUser(userId);
+        }
     }
 }
