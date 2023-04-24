@@ -2,6 +2,7 @@
 using BusinessLayer.DTOs;
 using BusinessLayer.DTOs.GoalCreationDTO;
 using BusinessLayer.DTOs.GoalsGettingDTO;
+using BusinessLayer.Enums;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,21 +19,11 @@ namespace BusinessLayer.Services
         public GoalService(DataAccessLayer.Data.ApplicationContext context,
             IConfiguration configuration,
             IMapper mapper
-            )
+        )
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
-        }
-
-        int CalculateGoalProgress(Goal goal)
-        {
-            int amountOfCompleted = 0;
-            foreach (GoalTask task in goal.Tasks)
-            {
-                if (task.IsCompleted) amountOfCompleted++;
-            }
-            return (amountOfCompleted / goal.Tasks.Count) * 100;
         }
 
         public async Task<GoalForCreationDTO> CreateGoal(GoalForCreationDTO goal)
@@ -55,91 +46,140 @@ namespace BusinessLayer.Services
 
         public async Task<GoalsListForGettingDTO> GetGoals()
         {
+            async Task<GoalForGettingDTO> AddSubgoalsToCurrentGoal(GoalForGettingDTO goal, List<Goal>? subgoals)
+            {
+                if (subgoals is null) return goal;
+                foreach (Goal subgoal in subgoals)
+                {
+                    var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
+                    subgoalToGet.Tasks = _mapper.Map<List<GoalTaskDTO>>(await _context.GoalTasks
+                        .Where(task => task.GoalId == subgoal.Id)
+                        .ToListAsync());
+                    subgoalToGet.Progress = CalculateGoalProgress(subgoal);
+                    goal.Subgoals.Add(subgoalToGet);
+                }
+
+                return goal;
+            }
+
             GoalsListForGettingDTO goalsList = new();
-            foreach (var goal in _context.GoalList)
+            foreach (Goal goal in _context.GoalList)
             {
                 bool isSubgoal = goal.MainGoalId != null;
-                var subgoalsOfCurrentGoal = await _context.GoalList.Where(item => item.MainGoalId == goal.Id)?.ToListAsync()!;
-                bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
                 if (!isSubgoal)
                 {
+                    var subgoalsOfCurrentGoal =
+                        await _context.GoalList.Where(item => item.MainGoalId == goal.Id)?.ToListAsync()!;
+                    bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
                     var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
+
                     goalToGet.Creator = _mapper.Map<UserForGettingDTO?>(await _context.UserList
                         .Where(user => user.Id == goal.CreatorId).FirstOrDefaultAsync());
                     var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
-                    goalToGet.Members = members.Select(member => _mapper.Map<UserForGettingDTO>(_context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
+                    goalToGet.Members = members.Select(member =>
+                        _mapper.Map<UserForGettingDTO>(
+                            _context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
                     if (isComplexGoal)
                     {
-                        foreach (Goal subgoal in subgoalsOfCurrentGoal)
-                        {
-                            var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
-                            subgoalToGet.Tasks = _mapper.Map<List<GoalTaskDTO>>(await _context.GoalTasks.Where(task => task.GoalId == subgoal.Id)
-                                .ToListAsync());
-                            subgoalToGet.Progress = CalculateGoalProgress(subgoal);
-                            goalToGet.Subgoals.Add(subgoalToGet);
-                        }
-                        goalToGet.Progress = goalToGet.Subgoals.Sum(subgoal => subgoal.Progress) / goalToGet.Subgoals.Count;
+                        goalToGet.Type = GoalTypes.Complex;
+                        goalToGet = await AddSubgoalsToCurrentGoal(goalToGet, subgoalsOfCurrentGoal);
+                        goalToGet.Progress = goalToGet.Subgoals.Sum(subgoal => subgoal.Progress) /
+                                             goalToGet.Subgoals.Count;
                     }
                     else
                     {
+                        goalToGet.Type = GoalTypes.Simple;
                         var tasksForCurrentGoal =
                             await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
-                        foreach (var task in tasksForCurrentGoal)
+                        foreach (GoalTask task in tasksForCurrentGoal)
                         {
                             goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
                         }
 
                         goalToGet.Progress = CalculateGoalProgress(goal);
                     }
+
                     goalsList.Goals.Add(goalToGet);
                 }
             }
+
             return goalsList;
         }
-    }
 
-    public async Task<GoalListForGettingDTO> GetGoalsForUser (string userID)
-    {
-        GoalsListForGettingDTO goalsList = new();
-        foreach (var goal in _context.GoalList)
+        public async Task<GoalsListForGettingDTO> GetGoalsForUser(string userId)
         {
-            bool isSubgoal = goal.MainGoalId != null;
-            var subgoalsOfCurrentGoal = await _context.GoalList.Where(item => item.MainGoalId == goal.Id)?.ToListAsync()!;
-            bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
-            if (!isSubgoal)
+            async Task<GoalForGettingDTO> AddSubgoalsToCurrentGoal(GoalForGettingDTO goal, List<Goal>? subgoals)
             {
-                var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
-                goalToGet.Creator = _mapper.Map<UserForGettingDTO?>(await _context.UserList
-                    .Where(user => user.Id == goal.CreatorId).FirstOrDefaultAsync());
-                var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
-                goalToGet.Members = members.Select(member => _mapper.Map<UserForGettingDTO>(_context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
-                if (isComplexGoal)
+                if (subgoals is null) return goal;
+                foreach (Goal subgoal in subgoals)
                 {
-                    foreach (Goal subgoal in subgoalsOfCurrentGoal)
-                    {
-                        var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
-                        subgoalToGet.Tasks = _mapper.Map<List<GoalTaskDTO>>(await _context.GoalTasks.Where(task => task.GoalId == subgoal.Id)
-                            .ToListAsync());
-                        subgoalToGet.Progress = CalculateGoalProgress(subgoal);
-                        goalToGet.Subgoals.Add(subgoalToGet);
-                    }
-                    goalToGet.Progress = goalToGet.Subgoals.Sum(subgoal => subgoal.Progress) / goalToGet.Subgoals.Count;
+                    var subgoalToGet = _mapper.Map<SubgoalDTO>(subgoal);
+                    subgoalToGet.Tasks = _mapper.Map<List<GoalTaskDTO>>(await _context.GoalTasks
+                        .Where(task => task.GoalId == subgoal.Id)
+                        .ToListAsync());
+                    subgoalToGet.Progress = CalculateGoalProgress(subgoal);
+                    goal.Subgoals.Add(subgoalToGet);
                 }
-                else
+
+                return goal;
+            }
+
+            GoalsListForGettingDTO goalsList = new();
+            var goalsForCurrentUser = await _context.GoalList.Where(item => item.CreatorId == userId).ToListAsync();
+            foreach (Goal goal in goalsForCurrentUser)
+            {
+                bool isSubgoal = goal.MainGoalId != null;
+                if (!isSubgoal)
                 {
-                    var tasksForCurrentGoal =
-                        await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
-                    foreach (var task in tasksForCurrentGoal)
+                    var subgoalsOfCurrentGoal =
+                        await _context.GoalList.Where(item => item.MainGoalId == goal.Id)?.ToListAsync()!;
+                    bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
+                    var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
+
+                    goalToGet.Creator = _mapper.Map<UserForGettingDTO?>(await _context.UserList
+                        .Where(user => user.Id == goal.CreatorId).FirstOrDefaultAsync());
+                    var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
+                    goalToGet.Members = members.Select(member =>
+                        _mapper.Map<UserForGettingDTO>(
+                            _context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
+                    if (isComplexGoal)
                     {
-                        goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
+                        goalToGet.Type = GoalTypes.Complex;
+                        goalToGet = await AddSubgoalsToCurrentGoal(goalToGet, subgoalsOfCurrentGoal);
+                        goalToGet.Progress = goalToGet.Subgoals.Sum(subgoal => subgoal.Progress) /
+                                             goalToGet.Subgoals.Count;
+                    }
+                    else
+                    {
+                        goalToGet.Type = GoalTypes.Simple;
+                        var tasksForCurrentGoal =
+                            await _context.GoalTasks.Where(task => task.GoalId == goal.Id).ToListAsync();
+                        foreach (GoalTask task in tasksForCurrentGoal)
+                        {
+                            goalToGet.Tasks.Add(_mapper.Map<GoalTaskDTO>(task));
+                        }
+
+                        goalToGet.Progress = CalculateGoalProgress(goal);
                     }
 
-                    goalToGet.Progress = CalculateGoalProgress(goal);
+                    goalsList.Goals.Add(goalToGet);
                 }
-                goalsList.Goals.Add(goalToGet);
             }
+
+            return goalsList;
         }
-        return goalsList;
+
+        int CalculateGoalProgress(Goal goal)
+        {
+            int amountOfCompleted = 0;
+            foreach (GoalTask task in goal.Tasks)
+            {
+                if (task.IsCompleted) amountOfCompleted++;
+            }
+
+            int result = Convert.ToInt32(Math.Floor(Convert.ToDecimal(amountOfCompleted * 100 / goal.Tasks.Count)));
+
+            return result;
+        }
     }
-}
 }
