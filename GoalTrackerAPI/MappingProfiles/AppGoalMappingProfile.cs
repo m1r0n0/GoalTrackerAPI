@@ -16,6 +16,7 @@ namespace GoalTrackerAPI.MappingProfiles
             CreateMap<Goal, SubgoalDTO>().ReverseMap();
             CreateMap<Goal, GoalForGettingDTO>().ReverseMap();
             CreateMap<GoalTask, GoalTaskDTO>().ReverseMap();
+            CreateMap<Goal, GoalForEditDTO>().ReverseMap();
         }
     }
 }

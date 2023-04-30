@@ -2,7 +2,6 @@
 using BusinessLayer.DTOs;
 using BusinessLayer.DTOs.GoalCreationDTO;
 using BusinessLayer.DTOs.GoalsGettingDTO;
-using BusinessLayer.Enums;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -44,10 +43,13 @@ namespace BusinessLayer.Services
             return goal;
         }
 
-        public async Task<GoalForCreationDTO> EditGoal(GoalForGettingDTO goal, int goalId)
+        public async Task<Goal> EditGoal(GoalForCreationDTO goal)
         {
-           GoalForCreationDTO goalToEdit = _mapper.Map<GoalForCreationDTO> (await _context.GoalList.Where(goal => goal.Id == goalId).FirstAsync());
-           goalToEdit = await CreateGoal(goalToEdit);
+            Goal goalToEdit = await _context.GoalList.Where(g => g.Id == goal.Id).FirstAsync();
+            var mainGoal = _mapper.Map<GoalForEditDTO>(goal);
+            goalToEdit = _mapper.Map<Goal>(mainGoal);
+            await _context.SaveChangesAsync();
+            return goalToEdit;
         }
 
         public async Task<GoalsListForGettingDTO> GetGoalsForUser(string userId)

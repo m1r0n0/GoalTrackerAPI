@@ -3,6 +3,7 @@ using BusinessLayer.DTOs.GoalCreationDTO;
 using BusinessLayer.DTOs.GoalsGettingDTO;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
+using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoalTrackerAPI.Controllers
@@ -40,9 +41,10 @@ namespace GoalTrackerAPI.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> EditGoal(string goalId)
+        public async Task<IActionResult> EditGoal(GoalForCreationDTO goal)
         {
-
+            Goal editedGoal = await _goalService.EditGoal(goal);
+            return Ok(editedGoal);
         }
     }
 }
