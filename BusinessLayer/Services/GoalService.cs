@@ -6,6 +6,8 @@ using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Formats.Asn1;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BusinessLayer.Services
 {
@@ -125,6 +127,18 @@ namespace BusinessLayer.Services
             }
 
             return goalsList;
+        }
+
+        public async Task<GoalTask> AddTask (GoalTask task)
+        {
+            _context.GoalTasks.Add(task);
+            await _context.SaveChangesAsync();
+            return task;
+        }
+
+        public async Task<SubgoalDTO> AddSubGoal(SubgoalDTO subgoal)
+        {
+            _context
         }
     }
 }

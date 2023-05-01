@@ -46,5 +46,17 @@ namespace GoalTrackerAPI.Controllers
             Goal editedGoal = await _goalService.EditGoal(goal);
             return Ok(editedGoal);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> AddTask (GoalTask task)
+        {
+            return Ok(await _goalService.AddTask(task));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> AddSubGoal(SubgoalDTO subgoal)
+        {
+
+        }
     }
 }
