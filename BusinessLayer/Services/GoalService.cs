@@ -6,8 +6,6 @@ using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Formats.Asn1;
-using System.Security.Cryptography.X509Certificates;
 
 namespace BusinessLayer.Services
 {
@@ -47,11 +45,29 @@ namespace BusinessLayer.Services
 
         public async Task<Goal> EditGoal(GoalForCreationDTO goal)
         {
+
             Goal goalToEdit = await _context.GoalList.Where(g => g.Id == goal.Id).FirstAsync();
-            var mainGoal = _mapper.Map<GoalForEditDTO>(goal);
-            goalToEdit = _mapper.Map<Goal>(mainGoal);
+            //var mainGoal = _mapper.Map<GoalForEditDTO>(goal);
+            MapFieldsToDBEntity(goal);
             await _context.SaveChangesAsync();
-            return goalToEdit;
+
+            //Goal goll = new();
+            return goalToEdit; //goalToEdit;
+
+            Goal MapFieldsToDBEntity(GoalForCreationDTO goalToMapFrom)
+            {
+                goalToEdit.Title = goalToMapFrom.Title;
+                goalToEdit.Category = goalToMapFrom.Category;
+                goalToEdit.CreatorId = goalToMapFrom.CreatorId;
+                goalToEdit.DateOfBeginning = goalToMapFrom.DateOfBeginning;
+                goalToEdit.DateOfEnding = goalToMapFrom.DateOfEnding;
+                goalToEdit.Description = goalToMapFrom.Description;
+                goalToEdit.MainGoalId = goalToMapFrom.MainGoalId;
+                goalToEdit.Priority = goalToMapFrom.Priority;
+                goalToEdit.Status = goalToMapFrom.Status;
+                goalToEdit.Theme = goalToMapFrom.Theme;
+                return goalToEdit;
+            }
         }
 
         public async Task<GoalsListForGettingDTO> GetGoalsForUser(string userId)
@@ -129,16 +145,16 @@ namespace BusinessLayer.Services
             return goalsList;
         }
 
-        public async Task<GoalTask> AddTask (GoalTask task)
+        public async Task<GoalTask> AddTask(GoalTask task)
         {
             _context.GoalTasks.Add(task);
             await _context.SaveChangesAsync();
             return task;
         }
 
-        public async Task<SubgoalDTO> AddSubGoal(SubgoalDTO subgoal)
-        {
-            _context
-        }
+        //public async Task<SubgoalDTO> AddSubGoal(SubgoalDTO subgoal)
+        //{
+        //  _context
+        //}
     }
 }

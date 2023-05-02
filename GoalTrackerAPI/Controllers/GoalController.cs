@@ -48,15 +48,15 @@ namespace GoalTrackerAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> AddTask (GoalTask task)
+        public async Task<IActionResult> AddTask(GoalTask task)
         {
             return Ok(await _goalService.AddTask(task));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> AddSubGoal(SubgoalDTO subgoal)
-        {
+        //[HttpPut]
+        //  public async Task<IActionResult> AddSubGoal(SubgoalDTO subgoal)
+        //{
 
-        }
+        // }
     }
 }
