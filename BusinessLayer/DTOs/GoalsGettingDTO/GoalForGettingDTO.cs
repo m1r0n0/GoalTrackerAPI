@@ -17,13 +17,5 @@
         public IList<UserForGettingDTO> Members { get; set; } = new List<UserForGettingDTO>();
         public IList<GoalTaskDTO> Tasks { get; set; } = new List<GoalTaskDTO>();
         public IList<SubgoalDTO> Subgoals { get; set; } = new List<SubgoalDTO>();
-
-        public GoalForGettingDTO(IList<UserForGettingDTO> members, IList<GoalTaskDTO> tasks)
-        {
-            Members = members;
-            Tasks = tasks;
-        }
-
-        public GoalForGettingDTO() { }
     }
 }

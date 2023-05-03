@@ -11,17 +11,14 @@ namespace BusinessLayer.Services
 {
     public class GoalService : IGoalService
     {
-        private readonly IConfiguration _configuration;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
         private readonly IMapper _mapper;
 
         public GoalService(DataAccessLayer.Data.ApplicationContext context,
-            IConfiguration configuration,
             IMapper mapper
         )
         {
             _context = context;
-            _configuration = configuration;
             _mapper = mapper;
         }
 
@@ -43,30 +40,44 @@ namespace BusinessLayer.Services
             return goal;
         }
 
-        public async Task<Goal> EditGoal(GoalForCreationDTO goal)
+        public async Task<GoalForGettingDTO> EditGoal(GoalForCreationDTO goal)
         {
+            GoalForGettingDTO editedGoal = new();
+            editedGoal = await MapFieldsToGoalDBEntity(goal);
+            if (goal.SubGoals is not null)
+                editedGoal.Subgoals = await MapFieldsToSubgoalDBEnities(goal.SubGoals);
 
-            Goal goalToEdit = await _context.GoalList.Where(g => g.Id == goal.Id).FirstAsync();
-            //var mainGoal = _mapper.Map<GoalForEditDTO>(goal);
-            MapFieldsToDBEntity(goal);
-            await _context.SaveChangesAsync();
 
-            //Goal goll = new();
-            return goalToEdit; //goalToEdit;
+            return goalToEdit;
 
-            Goal MapFieldsToDBEntity(GoalForCreationDTO goalToMapFrom)
+            async Task<GoalForGettingDTO> MapFieldsToGoalDBEntity(GoalForCreationDTO goalToMapFrom)
             {
+                Goal goalToEdit = await _context.GoalList.Where(g => g.Id == goal.Id).FirstAsync();
                 goalToEdit.Title = goalToMapFrom.Title;
                 goalToEdit.Category = goalToMapFrom.Category;
                 goalToEdit.CreatorId = goalToMapFrom.CreatorId;
                 goalToEdit.DateOfBeginning = goalToMapFrom.DateOfBeginning;
                 goalToEdit.DateOfEnding = goalToMapFrom.DateOfEnding;
                 goalToEdit.Description = goalToMapFrom.Description;
-                goalToEdit.MainGoalId = goalToMapFrom.MainGoalId;
                 goalToEdit.Priority = goalToMapFrom.Priority;
                 goalToEdit.Status = goalToMapFrom.Status;
                 goalToEdit.Theme = goalToMapFrom.Theme;
-                return goalToEdit;
+                await _context.SaveChangesAsync();
+                return _mapper.Map <GoalForGettingDTO> (goalToEdit);
+            }
+
+            async Task<List<SubgoalDTO>> MapFieldsToSubgoalDBEnities(IList<SubgoalDTO> subgoalListToMapFrom)
+            {
+                List <SubgoalDTO> subgoals = new List<SubgoalDTO>();
+                    foreach (var subgoalToMapFrom in subgoalListToMapFrom)
+                    {
+                        var subgoalToEdit = await _context.GoalList.Where(g => g.MainGoalId == subgoalToMapFrom.MainGoalId).FirstAsync();
+                        subgoalToEdit.Title = subgoalToMapFrom.Title;
+                        subgoalToEdit.MainGoalId = subgoalToMapFrom.MainGoalId;
+                        //Map tasks
+                        subgoals.Add(_mapper.Map<SubgoalDTO>(subgoalToEdit));
+                    }
+                return subgoals;
             }
         }
 
@@ -152,7 +163,8 @@ namespace BusinessLayer.Services
             return task;
         }
 
-        //public async Task<SubgoalDTO> AddSubGoal(SubgoalDTO subgoal)
+        //public async Task<SubgoalDTO
+        //> AddSubGoal(SubgoalDTO subgoal)
         //{
         //  _context
         //}

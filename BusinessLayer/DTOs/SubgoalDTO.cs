@@ -4,6 +4,7 @@
     {
         public string Title { get; set; } = string.Empty;
         public int Progress { get; set; } = 0;
+        public int MainGoalId { get; set; }
         public IList<GoalTaskDTO> Tasks { get; set; } = new List<GoalTaskDTO>();
     }
 }
