@@ -8,7 +8,7 @@ namespace BusinessLayer.Interfaces
     {
         Task<GoalTask> AddTask(GoalTask task);
         Task<GoalForCreationDTO> CreateGoal(GoalForCreationDTO goal);
-        Task<Goal> EditGoal(GoalForCreationDTO goal);
+        Task<GoalForGettingDTO> EditGoal(GoalForCreationDTO goal);
         Task<GoalsListForGettingDTO> GetGoalsForUser(string userId);
     }
 }

@@ -5,7 +5,6 @@ using BusinessLayer.DTOs.GoalsGettingDTO;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace BusinessLayer.Services
 {
@@ -45,10 +44,10 @@ namespace BusinessLayer.Services
             GoalForGettingDTO editedGoal = new();
             editedGoal = await MapFieldsToGoalDBEntity(goal);
             if (goal.SubGoals is not null)
-                editedGoal.Subgoals = await MapFieldsToSubgoalDBEnities(goal.SubGoals);
+                editedGoal.Subgoals = await MapFieldsToSubgoalDBEntities(goal.SubGoals);
 
 
-            return goalToEdit;
+            return editedGoal;
 
             async Task<GoalForGettingDTO> MapFieldsToGoalDBEntity(GoalForCreationDTO goalToMapFrom)
             {
@@ -63,21 +62,37 @@ namespace BusinessLayer.Services
                 goalToEdit.Status = goalToMapFrom.Status;
                 goalToEdit.Theme = goalToMapFrom.Theme;
                 await _context.SaveChangesAsync();
-                return _mapper.Map <GoalForGettingDTO> (goalToEdit);
+                return _mapper.Map<GoalForGettingDTO>(goalToEdit);
             }
 
-            async Task<List<SubgoalDTO>> MapFieldsToSubgoalDBEnities(IList<SubgoalDTO> subgoalListToMapFrom)
+            async Task<List<SubgoalDTO>> MapFieldsToSubgoalDBEntities(IList<SubgoalDTO> subgoalsListToMapFrom)
             {
-                List <SubgoalDTO> subgoals = new List<SubgoalDTO>();
-                    foreach (var subgoalToMapFrom in subgoalListToMapFrom)
-                    {
-                        var subgoalToEdit = await _context.GoalList.Where(g => g.MainGoalId == subgoalToMapFrom.MainGoalId).FirstAsync();
-                        subgoalToEdit.Title = subgoalToMapFrom.Title;
-                        subgoalToEdit.MainGoalId = subgoalToMapFrom.MainGoalId;
-                        //Map tasks
-                        subgoals.Add(_mapper.Map<SubgoalDTO>(subgoalToEdit));
-                    }
+                List<SubgoalDTO> subgoals = new List<SubgoalDTO>();
+                foreach (var subgoalToMapFrom in subgoalsListToMapFrom)
+                {
+                    var subgoalToEdit = await _context.GoalList.Where(g => g.MainGoalId == subgoalToMapFrom.MainGoalId).FirstAsync();
+                    subgoalToEdit.Title = subgoalToMapFrom.Title;
+                    subgoalToEdit.MainGoalId = subgoalToMapFrom.MainGoalId;
+                    subgoalToEdit.Tasks = MapFieldsToTaskDBEntities(_mapper.Map<GoalTask>(subgoalToMapFrom.Tasks));
+                    subgoals.Add(_mapper.Map<SubgoalDTO>(subgoalToEdit));
+                }
+                await _context.SaveChangesAsync();
                 return subgoals;
+            }
+
+            async Task<List<GoalTaskDTO>> MapFieldsToTaskDBEntities(IList<GoalTaskDTO> tasksListToMapFrom)
+            {
+                List<GoalTaskDTO> tasks = new List<GoalTaskDTO>();
+                foreach (GoalTaskDTO taskToMapFrom in tasksListToMapFrom)
+                {
+                    GoalTask taskToEdit = await _context.GoalTasks.Where(t => t.GoalId == taskToMapFrom.MainGoalId).FirstAsync();
+                    taskToEdit.Title = taskToMapFrom.Title;
+                    taskToEdit.IsCompleted = taskToMapFrom.IsCompleted;
+                    taskToEdit.Time = taskToMapFrom.Time;
+                    tasks.Add(_mapper.Map<GoalTaskDTO>(taskToEdit));
+                }
+                await _context.SaveChangesAsync();
+                return tasks;
             }
         }
 
