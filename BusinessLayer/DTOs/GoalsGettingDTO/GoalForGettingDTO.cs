@@ -1,4 +1,6 @@
-﻿namespace BusinessLayer.DTOs.GoalsGettingDTO
+﻿using DataAccessLayer.Models;
+
+namespace BusinessLayer.DTOs.GoalsGettingDTO
 {
     public class GoalForGettingDTO
     {
@@ -15,7 +17,7 @@
         public string Theme { get; set; } = string.Empty;
         public UserForGettingDTO? Creator { get; set; }
         public IList<UserForGettingDTO> Members { get; set; } = new List<UserForGettingDTO>();
-        public IList<GoalTaskDTO> Tasks { get; set; } = new List<GoalTaskDTO>();
-        public IList<SubgoalDTO> Subgoals { get; set; } = new List<SubgoalDTO>();
+        public IList<GoalTask> Tasks { get; set; } = new List<GoalTask>();
+        public IList<Subgoal> Subgoals { get; set; } = new List<Subgoal>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs.GoalCreationDTO;
+using DataAccessLayer.Models;
 
 namespace BusinessLayer.DTOs
 {
@@ -15,7 +16,7 @@ namespace BusinessLayer.DTOs
         public string Theme { get; set; } = string.Empty;
         public string CreatorId { get; set; } = string.Empty;
         public IList<MemberForCreationDTO>? MembersIds { get; set; } = new List<MemberForCreationDTO>();
-        public IList<SubgoalDTO>? SubGoals { get; set; } = new List<SubgoalDTO>();
-        public IList<GoalTaskDTO>? Tasks { get; set; } = new List<GoalTaskDTO>();
+        public IList<Subgoal>? SubGoals { get; set; } = new List<Subgoal>();
+        public IList<GoalTask>? Tasks { get; set; } = new List<GoalTask>();
     }
 }

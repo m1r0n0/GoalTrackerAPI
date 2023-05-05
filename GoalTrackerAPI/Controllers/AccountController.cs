@@ -39,7 +39,7 @@ namespace GoalTrackerAPI.Controllers
             var user = _mapper.Map<User>(model);
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded) return BadRequest(model);
-            model.Id = _accountService.GetUserEmailFromUserID(model.Email).UserId;
+            model.Id = _accountService.GetUserIDFromUserEmail(model.Email).UserId;
             await _signInManager.SignInAsync(user, false);
             return Ok(model);
         }

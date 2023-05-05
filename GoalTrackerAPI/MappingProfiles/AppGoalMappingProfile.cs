@@ -11,11 +11,11 @@ namespace GoalTrackerAPI.MappingProfiles
         public AppGoalMappingProfile()
         {
             CreateMap<Goal, GoalForCreationDTO>().ReverseMap();
-            CreateMap<GoalTask, GoalTaskDTO>().ReverseMap();
+            //CreateMap<GoalTask, GoalTaskDTO>().ReverseMap();
             CreateMap<Member, MemberForCreationDTO>().ReverseMap();
-            CreateMap<Goal, SubgoalDTO>().ReverseMap();
+            CreateMap<Goal, Subgoal>().ReverseMap();
             CreateMap<Goal, GoalForGettingDTO>().ReverseMap();
-            CreateMap<GoalTask, GoalTaskDTO>().ReverseMap();
+            //CreateMap<GoalTask, GoalTaskDTO>().ReverseMap();
             CreateMap<Goal, GoalForEditDTO>().ReverseMap();
         }
     }

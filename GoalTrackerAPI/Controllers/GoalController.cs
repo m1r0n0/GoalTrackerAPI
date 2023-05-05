@@ -43,7 +43,7 @@ namespace GoalTrackerAPI.Controllers
         [HttpPatch]
         public async Task<IActionResult> EditGoal(GoalForCreationDTO goal)
         {
-            Goal editedGoal = await _goalService.EditGoal(goal);
+            GoalForGettingDTO editedGoal = await _goalService.EditGoal(goal);
             return Ok(editedGoal);
         }
 
