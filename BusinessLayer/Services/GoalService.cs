@@ -33,6 +33,7 @@ namespace BusinessLayer.Services
                 {
                     var mappedSubGoal = _mapper.Map<Goal>(subGoal);
                     mappedSubGoal.MainGoalId = mainGoal.Id;
+                    mappedSubGoal.CreatorId = mainGoal.CreatorId;
                     _context.GoalList.Add(mappedSubGoal);
                 }
             await _context.SaveChangesAsync();
