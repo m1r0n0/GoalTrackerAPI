@@ -1,4 +1,4 @@
-﻿namespace BusinessLayer.DTOs
+﻿namespace BusinessLayer.DTOs.UserDTOs
 {
     public class UserEmailIdDTO
     {

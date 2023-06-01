@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BusinessLayer.DTOs;
 using BusinessLayer.DTOs.GoalsGettingDTO;
+using BusinessLayer.DTOs.UserDTOs;
 using DataAccessLayer.Models;
 
 namespace GoalTrackerAPI.MappingProfiles
@@ -12,7 +12,7 @@ namespace GoalTrackerAPI.MappingProfiles
             CreateMap<UserDTO, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom((src => src.Email)))
                 .ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
-            CreateMap<User, UserForGettingDTO>()
+            CreateMap<User, UserToGetDTO>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                 .ReverseMap();
         }

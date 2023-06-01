@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLayer.DTOs;
+using BusinessLayer.DTOs.UserDTOs;
+using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Identity;
@@ -39,7 +41,7 @@ namespace GoalTrackerAPI.Controllers
             var user = _mapper.Map<User>(model);
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded) return BadRequest(model);
-            model.Id = _accountService.GetUserEmailFromUserID(model.Email).UserId;
+            model.UserId = _accountService.GetUserIDFromUserEmail(model.Email).UserId;
             await _signInManager.SignInAsync(user, false);
             return Ok(model);
         }
@@ -52,18 +54,18 @@ namespace GoalTrackerAPI.Controllers
                 await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
             if (!result.Succeeded) return BadRequest(model);
             UserEmailIdDTO emailIdDTO = _accountService.GetUserIDFromUserEmail(model.Email);
-            model.Id = emailIdDTO.UserId;
+            model.UserId = emailIdDTO.UserId;
             return Ok(model);
         }
 
         [HttpGet]
-        public UserEmailIdDTO GetUserId(string userEmail)
+        public UserEmailIdDTO GetUserIdByEmail(string userEmail)
         {
             return _accountService.GetUserIDFromUserEmail(userEmail);
         }
 
         [HttpGet]
-        public UserEmailIdDTO GetUserEmail(string userId)
+        public UserEmailIdDTO GetUserEmailById(string userId)
         {
             return _accountService.GetUserEmailFromUserID(userId);
         }
@@ -83,14 +85,39 @@ namespace GoalTrackerAPI.Controllers
         [HttpPatch]
         public async Task<IActionResult> ChangeUserPassword(UserPasswordIdDTO model)
         {
-            User? user = _accountService.GetUserById(model.UserId);
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
-            if (result.Succeeded)
+            try
             {
-                return Ok(model);
+                User? user = await _accountService.GetUserById(model.UserId);
+                if (user is null) throw new NotFoundException();
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return Ok(model);
+                }
+
+                return BadRequest(model);
             }
-            return BadRequest(model);
+            catch (NotFoundException ex)
+            {
+                return NotFound(model);
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            try
+            {
+                User user = await _accountService.GetUserById(id);
+                return Ok(_mapper.Map<UserToGetDTO>(user));
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(id);
+            }
+            
         }
     }
 }
