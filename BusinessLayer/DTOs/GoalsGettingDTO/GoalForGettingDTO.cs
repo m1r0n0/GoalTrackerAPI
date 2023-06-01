@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Models;
+﻿using BusinessLayer.DTOs.UserDTOs;
+using DataAccessLayer.Models;
 
 namespace BusinessLayer.DTOs.GoalsGettingDTO
 {
@@ -15,8 +16,8 @@ namespace BusinessLayer.DTOs.GoalsGettingDTO
         public string DateOfBeginning { get; set; } = string.Empty;
         public string DateOfEnding { get; set; } = string.Empty;
         public string Theme { get; set; } = string.Empty;
-        public UserForGettingDTO? Creator { get; set; }
-        public IList<UserForGettingDTO> Members { get; set; } = new List<UserForGettingDTO>();
+        public UserToGetDTO? Creator { get; set; }
+        public IList<UserToGetDTO> Members { get; set; } = new List<UserToGetDTO>();
         public IList<GoalTask> Tasks { get; set; } = new List<GoalTask>();
         public IList<Subgoal> Subgoals { get; set; } = new List<Subgoal>();
     }

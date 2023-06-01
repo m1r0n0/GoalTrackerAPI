@@ -1,16 +1,20 @@
-﻿using BusinessLayer.DTOs;
+﻿using AutoMapper;
+using BusinessLayer.DTOs.UserDTOs;
 using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Services
 {
     public class AccountService : IAccountService
     {
         private readonly DataAccessLayer.Data.ApplicationContext _context;
-        public AccountService(DataAccessLayer.Data.ApplicationContext context)
+        private readonly IMapper _mapper;
+        public AccountService(DataAccessLayer.Data.ApplicationContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public UserEmailIdDTO GetUserIDFromUserEmail(string userEmail)
         {
@@ -86,9 +90,9 @@ namespace BusinessLayer.Services
             }
         }
 
-        public User GetUserById(string Id)
+        public async Task<User> GetUserById(string Id)
         {
-            User? user = _context.UserList?.Where(user => user.Id == Id).FirstOrDefault();
+            User? user = await _context.UserList?.Where(user => user.Id == Id).FirstOrDefaultAsync();
             if (user is null) throw new NotFoundException();
             return user;
         }

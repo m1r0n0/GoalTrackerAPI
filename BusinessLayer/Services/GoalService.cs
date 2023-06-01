@@ -2,6 +2,7 @@
 using BusinessLayer.DTOs;
 using BusinessLayer.DTOs.GoalCreationDTO;
 using BusinessLayer.DTOs.GoalsGettingDTO;
+using BusinessLayer.DTOs.UserDTOs;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -146,11 +147,11 @@ namespace BusinessLayer.Services
                     bool isComplexGoal = subgoalsOfCurrentGoal.Count != 0;
                     var goalToGet = _mapper.Map<GoalForGettingDTO>(goal);
 
-                    goalToGet.Creator = _mapper.Map<UserForGettingDTO?>(await _context.UserList
+                    goalToGet.Creator = _mapper.Map<UserToGetDTO?>(await _context.UserList
                         .Where(user => user.Id == goal.CreatorId).FirstOrDefaultAsync());
                     var members = await _context.MembersIds.Where(member => member.GoalId == goal.Id).ToListAsync();
                     goalToGet.Members = members.Select(member =>
-                        _mapper.Map<UserForGettingDTO>(
+                        _mapper.Map<UserToGetDTO>(
                             _context.UserList.FirstOrDefault(user => user.Id == member.MemberId))).ToList();
                     goalToGet.isComplex = isComplexGoal;
                     if (isComplexGoal)
