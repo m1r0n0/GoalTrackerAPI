@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.DTOs;
+using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Identity;
@@ -83,14 +84,38 @@ namespace GoalTrackerAPI.Controllers
         [HttpPatch]
         public async Task<IActionResult> ChangeUserPassword(UserPasswordIdDTO model)
         {
-            User? user = _accountService.GetUserById(model.UserId);
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
-            if (result.Succeeded)
+            try
             {
-                return Ok(model);
+                User? user = _accountService.GetUserById(model.UserId);
+                if (user is null) throw new NotFoundException();
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return Ok(model);
+                }
+
+                return BadRequest(model);
             }
-            return BadRequest(model);
+            catch (NotFoundException ex)
+            {
+                return NotFound(model);
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            try
+            {
+                return Ok(_accountService.GetUserById(id));
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(id);
+            }
+            
         }
     }
 }

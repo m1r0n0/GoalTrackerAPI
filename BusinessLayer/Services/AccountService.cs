@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 
@@ -85,9 +86,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public User? GetUserById(string Id)
+        public User GetUserById(string Id)
         {
-            return _context.UserList?.Where(user => user.Id == Id).FirstOrDefault();
+            User? user = _context.UserList?.Where(user => user.Id == Id).FirstOrDefault();
+            if (user is null) throw new NotFoundException();
+            return user;
         }
     }
 }

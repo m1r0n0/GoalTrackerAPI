@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
+const string myAllowedOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,6 +23,20 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowedOrigins,
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+
+        });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -36,6 +50,7 @@ app.UseAuthentication();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseCors(myAllowedOrigins);
 
 app.MapControllers();
 
